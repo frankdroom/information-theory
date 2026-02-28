@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Шифратор: Rail Fence и Виженер</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+<h1>Шифрование: Rail Fence (EN) и Виженер (RU)</h1>
+
+<div class="panel">
+    <div class="panel-header">Настройки алгоритма</div>
+
+    <label>Алгоритм:
+        <select id="algorithm">
+            <option value="rail">Rail Fence (английский)</option>
+            <option value="vigenere">Виженер (русский)</option>
+        </select>
+    </label>
+
+    <div id="rail-settings">
+        <label>Ключ (число рельсов, ≥2):
+            <input type="number" id="rails" min="2" value="3">
+        </label>
+        <div class="hint">Шифруются только латинские буквы A–Z/a–z, остальные символы копируются как есть.</div>
+    </div>
+
+    <div id="vig-settings" style="display:none;">
+        <label>Ключ (слово на русском):
+            <input type="text" id="vigKey" placeholder="например: КЛЮЧ">
+        </label>
+        <div class="hint">Алфавит: А–Я с Ё. Цифры и латиница игнорируются.</div>
+    </div>
+
+    <label>Режим:
+        <div class="radio-group">
+            <label><input type="radio" name="mode" value="encrypt" checked> Шифрование</label>
+            <label><input type="radio" name="mode" value="decrypt"> Дешифрование</label>
+        </div>
+    </label>
+</div>
+
+<div class="panel">
+    <div class="panel-header">Ввод текста</div>
+    <div class="row">
+        <div class="col">
+            <label>Исходный текст:</label>
+            <textarea id="inputText" placeholder="Введите текст для шифрования/дешифрования..."></textarea>
+            <button class="btn" id="processBtn">Выполнить</button>
+            <button class="btn secondary" id="clearBtn">Очистить</button>
+        </div>
+        <div class="col">
+            <label>Загрузка файла (.txt):</label>
+            <input type="file" id="fileInput" accept=".txt">
+            <div class="small">Текст из файла будет загружен в поле слева.</div>
+        </div>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-header">Результат</div>
+
+    <div class="fence-label" id="fenceLabel" style="display:none;">
+         Визуализация изгороди:
+    </div>
+    <div id="fenceView" style="display:none;"></div>
+
+    <div class="vigenere-label" id="vigenereLabel" style="display:none;">
+        🔑 Таблица Виженера:
+    </div>
+    <div id="vigenereView" style="display:none;"></div>
+
+    <label style="margin-top:15px;">Текст результата:</label>
+    <textarea id="outputText" readonly placeholder="Результат появится здесь..."></textarea>
+    <button class="btn" id="saveBtn" disabled>💾 Сохранить в файл</button>
+</div>
+</body>
+</html>

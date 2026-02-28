@@ -1,0 +1,100 @@
+body {
+            font-family: Arial, sans-serif;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            text-align: center;
+        }
+        .panel {
+            background: #fff;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .panel-header {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+        select, input[type="text"], input[type="number"] {
+            padding: 5px 8px;
+            margin-top: 4px;
+            width: 250px;
+            max-width: 100%;
+        }
+        textarea {
+            width: 100%;
+            min-height: 140px;
+            margin-top: 5px;
+            padding: 8px;
+            resize: vertical;
+            font-family: Consolas, monospace;
+        }
+        #fenceView, #vigenereView {
+            white-space: pre;
+            font-family: Consolas, monospace;
+            border: 2px solid #1976d2;
+            padding: 12px;
+            min-height: 80px;
+            margin-top: 5px;
+            background: #f8f9ff;
+            border-radius: 4px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .col {
+            flex: 1 1 320px;
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 14px;
+            margin: 6px 4px 0 0;
+            border: none;
+            border-radius: 4px;
+            background-color: #1976d2;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn.secondary {
+            background-color: #555;
+        }
+        .btn:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        .small {
+            font-size: 12px;
+            color: #666;
+        }
+        input[type="file"] {
+            margin-top: 5px;
+        }
+        .radio-group {
+            margin-top: 5px;
+        }
+        .radio-group label {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .hint {
+            font-size: 12px;
+            color: #444;
+        }
+        .fence-label, .vigenere-label {
+            font-weight: bold;
+            color: #1976d2;
+        }
