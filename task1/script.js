@@ -318,10 +318,10 @@ elements.processBtn.addEventListener("click", () => {
             return;
         }
         
-        if (rails < 2) {
-            alert("Число рельсов должно быть ≥ 2.");
-            return;
-        }
+        // if (rails < 2) {
+        //     alert("Число рельсов должно быть ≥ 2.");
+        //     return;
+        // }
 
         if (mode === "encrypt") {
             const { cipherText, fenceString } = railEncrypt(text, rails);
