@@ -1,7 +1,6 @@
-// Алфавиты
+// Алфавит
 const RUS_ALPHABET = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ";
 
-// ========== Красивая визуализация Rail Fence ==========
 function buildPrettyFence(message, rails) {
     if (message.length === 0 || rails < 2) return "";
 
@@ -128,7 +127,6 @@ function buildVigenereTable(text, key, mode) {
     key = key.toUpperCase().replace(/[^А-ЯЁ]/g, "");
     if (!key.length) return "";
 
-    // Извлекаем только русские буквы из текста
     const russianLetters = [];
     for (let ch of text) {
         const upper = ch.toUpperCase();
@@ -139,7 +137,6 @@ function buildVigenereTable(text, key, mode) {
 
     if (russianLetters.length === 0) return "";
 
-    // Повторяем ключ точно под каждую букву
     let extendedKey = "";
     for (let i = 0; i < russianLetters.length; i++) {
         extendedKey += key[i % key.length];
@@ -147,11 +144,9 @@ function buildVigenereTable(text, key, mode) {
 
     let table = "";
     
-    // Таблица: исходный текст + ключ + результат
     table += `Исходный текст: ${russianLetters.map(c => c.padEnd(2)).join(" ")}\n`;
     table += `Ключ:           ${extendedKey.split("").map(c => c.padEnd(2)).join(" ")}\n`;
     
-    // Вычисляем результат
     let cipherLetters = [];
     for (let i = 0; i < russianLetters.length; i++) {
         const plainChar = russianLetters[i];
@@ -177,18 +172,15 @@ function buildVigenereTable(text, key, mode) {
     table += `Результат:      ${cipherLetters.map(c => c.padEnd(2)).join(" ")}\n`;
     table += `═`.repeat(extendedKey.length * 2 + 20) + "\n";
     
-    // КЛАССИЧЕСКАЯ таблица Виженера: строки=алфавит слева, столбцы=алфавит сверху
     const colsPerRow = 12;
     table += `\nТаблица Виженера:`;
     
-    // Заголовок столбцов (первые colsPerRow букв)
     let header = "  ";
     for (let i = 0; i < RUS_ALPHABET.length; i++) {
         header += " " + RUS_ALPHABET[i];
     }
     table += `\n${header}`;
     
-    // Основные строки таблицы
     for (let row = 0; row < RUS_ALPHABET.length; row++) {
         let rowLine = RUS_ALPHABET[row] + " ";
         for (let col = 0; col < RUS_ALPHABET.length; col++) {
@@ -198,7 +190,6 @@ function buildVigenereTable(text, key, mode) {
         table += `\n${rowLine}`;
     }
     
-    // Пояснение
     table += `\n\nКак пользоваться:`;
     table += `\n• Шифрование: строка=${mode === "encrypt" ? "открытый текст" : "шифртекст"}, столбец=ключ → пересечение=результат`;
 
@@ -264,7 +255,6 @@ function vigenereDecryptRU(text, key) {
     return result;
 }
 
-// ========== DOM ==========
 const elements = {
     algorithm: document.getElementById("algorithm"),
     railSettings: document.getElementById("rail-settings"),
@@ -300,7 +290,6 @@ elements.processBtn.addEventListener("click", () => {
         return;
     }
 
-    // очищаем визуализации
     elements.fenceView.style.display = "none";
     elements.fenceLabel.style.display = "none";
     elements.vigenereView.style.display = "none";
@@ -317,11 +306,6 @@ elements.processBtn.addEventListener("click", () => {
             alert("Ключ Rail Fence: введите корректное число.");
             return;
         }
-        
-        // if (rails < 2) {
-        //     alert("Число рельсов должно быть ≥ 2.");
-        //     return;
-        // }
 
         if (mode === "encrypt") {
             const { cipherText, fenceString } = railEncrypt(text, rails);
@@ -339,7 +323,6 @@ elements.processBtn.addEventListener("click", () => {
             return;
         }
         
-        // Показываем полную таблицу Виженера
         const vigenereTable = buildVigenereTable(text, key, mode);
         elements.vigenereView.textContent = vigenereTable;
         elements.vigenereView.style.display = "block";
