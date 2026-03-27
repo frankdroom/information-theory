@@ -102,6 +102,10 @@ function generateKeystream(initBits, length) {
 
 // ─── MAIN CIPHER ─────────────────────────────────────────────────────────────
 async function runCipher() {
+  if (mode === "dec") {
+  const text = new TextDecoder().decode(fileBytes);
+  fileBytes = hexToBytes(text);
+}
   const initBits = regInput.value;
   if (initBits.length !== N) { showStatus('error', 'Введите ровно 34 бита'); return; }
   if (!fileBytes)             { showStatus('error', 'Файл не выбран'); return; }
@@ -128,6 +132,12 @@ async function runCipher() {
     result[i] = fileBytes[i] ^ keyByte;
   }
   resultBytes = result;
+
+  if (mode === "enc") {
+  const hexText = bytesToHex(result);
+  resultBytes = new TextEncoder().encode(hexText);
+  resultFileName = "encrypted.txt";
+}
 
   setProgress(80, 'Подготовка отображения…');
   await tick();
@@ -156,10 +166,20 @@ async function runCipher() {
   document.getElementById('btnSave').disabled = false;
   document.getElementById('btnRun').disabled  = false;
 
-  const ext = mode === 'enc' ? '.enc' : '.dec';
-  resultFileName = fileInput.files[0]
-    ? fileInput.files[0].name + ext
-    : 'result' + ext;
+  if(fileInput.files[0].name.split('.').pop() === "mp4" )
+  {
+    resultFileName = 
+     fileInput.files[0].name.split('.').slice(0, -1).join('.') + ".enc";
+  }
+  else
+  {
+resultFileName = 
+     fileInput.files[0].name.split('.').slice(0, -1).join('.');
+  }
+  
+
+
+    
 }
 
 function bytesToBinStr(bytes) {
@@ -214,3 +234,18 @@ function setProgress(pct, label) {
 }
 
 function tick() { return new Promise(r => setTimeout(r, 0)); }
+
+function bytesToHex(bytes) {
+  return Array.from(bytes)
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join(' ');
+}
+
+function hexToBytes(hex) {
+  const clean = hex.replace(/\s+/g, '');
+  const arr = new Uint8Array(clean.length / 2);
+  for (let i = 0; i < arr.length; i++) {
+    arr[i] = parseInt(clean.substr(i * 2, 2), 16);
+  }
+  return arr;
+}
