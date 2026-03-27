@@ -1,5 +1,9 @@
+// ─── LFSR CONFIG ──────────────────────────────────────────────────────────────
+// Polynomial x^34 + x^15 + x^14 + x + 1
+// Taps (1-indexed from LSB): positions 34, 15, 14, 1
+// In array indexing (0-based): 33, 14, 13, 0
 const N = 34;
-const TAPS = [33, 14, 13, 0];
+const TAPS = [33, 14, 13, 0];   // 0-based indices into register array
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let fileBytes = null;
@@ -36,8 +40,8 @@ function updateRegVisual(bits) {
 
   regVisual.innerHTML = '';
   for (let i = 0; i < N; i++) {
-    const pos = N - i;   
-    const isTap = TAPS.includes(N - 1 - i); 
+    const pos = N - i;   // 1-indexed bit position from MSB display
+    const isTap = TAPS.includes(N - 1 - i); // 0-based
     const val = bits[i];
     const cell = document.createElement('div');
     cell.className = 'bit-cell ' + (val === '1' ? 'one' : val === '0' ? 'zero' : '');
@@ -84,28 +88,28 @@ function tryEnableRun() {
 }
 
 // ─── LFSR ─────────────────────────────────────────────────────────────────────
-
+// Сдвиг ВЛЕВО: reg[0] — выходной бит, новый бит (XOR отводов) встаёт в reg[N-1]
+// Отводы (0-based): 33=бит34, 14=бит15, 13=бит14, 0=бит1
 function generateKeystream(initBits, length) {
+  // register[0] = бит 34 (старший), register[33] = бит 1 (младший)
   const reg = new Uint8Array(N);
   for (let i = 0; i < N; i++) reg[i] = parseInt(initBits[i]);
 
   const stream = new Uint8Array(length);
   for (let i = 0; i < length; i++) {
-    stream[i] = reg[0]; 
+    stream[i] = reg[0];   // выходной бит — крайний левый (бит 34)
+    // обратная связь = XOR отводов
     let fb = 0;
     for (const t of TAPS) fb ^= reg[t];
+    // сдвиг влево: reg[0] уходит (уже сохранён), всё едет влево
     for (let j = 0; j < N - 1; j++) reg[j] = reg[j + 1];
-    reg[N - 1] = fb;     
+    reg[N - 1] = fb;      // новый бит встаёт в крайний правый разряд
   }
   return stream;
 }
 
 // ─── MAIN CIPHER ─────────────────────────────────────────────────────────────
 async function runCipher() {
-  if (mode === "dec") {
-  const text = new TextDecoder().decode(fileBytes);
-  fileBytes = hexToBytes(text);
-}
   const initBits = regInput.value;
   if (initBits.length !== N) { showStatus('error', 'Введите ровно 34 бита'); return; }
   if (!fileBytes)             { showStatus('error', 'Файл не выбран'); return; }
@@ -133,15 +137,10 @@ async function runCipher() {
   }
   resultBytes = result;
 
-  if (mode === "enc") {
-  const hexText = bytesToHex(result);
-  resultBytes = new TextEncoder().encode(hexText);
-  resultFileName = "encrypted.txt";
-}
-
   setProgress(80, 'Подготовка отображения…');
   await tick();
 
+  // Display — limit to first 512 bits for performance
   const DISP_BITS = Math.min(512, totalBits);
   const DISP_BYTES = Math.min(64, fileBytes.length);
 
@@ -166,20 +165,11 @@ async function runCipher() {
   document.getElementById('btnSave').disabled = false;
   document.getElementById('btnRun').disabled  = false;
 
-  if(fileInput.files[0].name.split('.').pop() === "mp4" )
-  {
-    resultFileName = 
-     fileInput.files[0].name.split('.').slice(0, -1).join('.') + ".enc";
-  }
-  else
-  {
-resultFileName = 
-     fileInput.files[0].name.split('.').slice(0, -1).join('.');
-  }
-  
-
-
-    
+  // Set save filename
+  const ext = mode === 'enc' ? '.enc' : '.dec';
+  resultFileName = fileInput.files[0]
+    ? fileInput.files[0].name + ext
+    : 'result' + ext;
 }
 
 function bytesToBinStr(bytes) {
@@ -234,18 +224,3 @@ function setProgress(pct, label) {
 }
 
 function tick() { return new Promise(r => setTimeout(r, 0)); }
-
-function bytesToHex(bytes) {
-  return Array.from(bytes)
-    .map(b => b.toString(16).padStart(2, '0'))
-    .join(' ');
-}
-
-function hexToBytes(hex) {
-  const clean = hex.replace(/\s+/g, '');
-  const arr = new Uint8Array(clean.length / 2);
-  for (let i = 0; i < arr.length; i++) {
-    arr[i] = parseInt(clean.substr(i * 2, 2), 16);
-  }
-  return arr;
-}
