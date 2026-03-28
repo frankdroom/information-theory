@@ -1,9 +1,6 @@
 // ─── LFSR CONFIG ──────────────────────────────────────────────────────────────
-// Polynomial x^34 + x^15 + x^14 + x + 1
-// Taps (1-indexed from LSB): positions 34, 15, 14, 1
-// In array indexing (0-based): 33, 14, 13, 0
 const N = 34;
-const TAPS = [33, 14, 13, 0];   // 0-based indices into register array
+const TAPS = [33, 14, 13, 0];
 
 // ─── STATE ───────────────────────────────────────────────────────────────────
 let fileBytes = null;
@@ -26,7 +23,6 @@ const regCount   = document.getElementById('regCount');
 const regVisual  = document.getElementById('regVisual');
 
 regInput.addEventListener('input', () => {
-  // Strip non-binary chars
   const clean = regInput.value.replace(/[^01]/g, '').slice(0, N);
   regInput.value = clean;
   updateRegVisual(clean);
@@ -40,7 +36,7 @@ function updateRegVisual(bits) {
 
   regVisual.innerHTML = '';
   for (let i = 0; i < N; i++) {
-    const pos = N - i;   // 1-indexed bit position from MSB display
+    const pos = N - i; 
     const isTap = TAPS.includes(N - 1 - i); // 0-based
     const val = bits[i];
     const cell = document.createElement('div');
@@ -88,22 +84,18 @@ function tryEnableRun() {
 }
 
 // ─── LFSR ─────────────────────────────────────────────────────────────────────
-// Сдвиг ВЛЕВО: reg[0] — выходной бит, новый бит (XOR отводов) встаёт в reg[N-1]
-// Отводы (0-based): 33=бит34, 14=бит15, 13=бит14, 0=бит1
 function generateKeystream(initBits, length) {
-  // register[0] = бит 34 (старший), register[33] = бит 1 (младший)
   const reg = new Uint8Array(N);
   for (let i = 0; i < N; i++) reg[i] = parseInt(initBits[i]);
 
   const stream = new Uint8Array(length);
   for (let i = 0; i < length; i++) {
-    stream[i] = reg[0];   // выходной бит — крайний левый (бит 34)
-    // обратная связь = XOR отводов
+    stream[i] = reg[0];
     let fb = 0;
     for (const t of TAPS) fb ^= reg[t];
-    // сдвиг влево: reg[0] уходит (уже сохранён), всё едет влево
+    
     for (let j = 0; j < N - 1; j++) reg[j] = reg[j + 1];
-    reg[N - 1] = fb;      // новый бит встаёт в крайний правый разряд
+    reg[N - 1] = fb;      
   }
   return stream;
 }
@@ -128,7 +120,6 @@ async function runCipher() {
   setProgress(50, 'XOR шифрование…');
   await tick();
 
-  // XOR byte by byte
   const result = new Uint8Array(fileBytes.length);
   for (let i = 0; i < fileBytes.length; i++) {
     let keyByte = 0;
