@@ -31,7 +31,7 @@ regInput.addEventListener('input', () => {
   tryEnableRun();
 });
 
-// ✔ извлечение только 0 и 1
+
 function extractBits(text) {
   return text.replace(/[^01]/g, '').slice(0, N);
 }
@@ -145,13 +145,8 @@ function generateKeystream(initBits, length) {
 
   async function runCipher() {
 
-  // берём только 0 и 1 ДЛЯ РАБОТЫ
   const initBits = extractBits(regInput.value);
 
-  // ❗ поле ввода НЕ изменяем
-  // regInput.value = initBits;  ← удалено
-
-  // обновляем только визуализацию
   updateRegVisual(initBits);
 
   if (initBits.length !== N) {
