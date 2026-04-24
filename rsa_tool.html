@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RSA Шифрование</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app">
+    <h2 class="sr-only">RSA шифрование и дешифрование файлов</h2>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('enc')">Шифрование</button>
+      <button class="tab" onclick="switchTab('dec')">Дешифрование</button>
+    </div>
+
+    <!-- ШИФРОВАНИЕ -->
+    <div id="enc" class="panel active">
+      <div class="card">
+        <div class="section-title">Параметры ключа RSA</div>
+        <div class="grid3" style="margin-bottom:12px;">
+          <div class="field">
+            <label>p (простое число)</label>
+            <input type="number" id="enc_p" value="61" min="2" oninput="validateParams()">
+          </div>
+          <div class="field">
+            <label>q (простое число)</label>
+            <input type="number" id="enc_q" value="53" min="2" oninput="validateParams()">
+          </div>
+          <div class="field">
+            <label>Kc (закрытый ключ)</label>
+            <input type="number" id="enc_kc" value="17" min="2" oninput="validateParams()">
+          </div>
+        </div>
+        <div id="param_checks"></div>
+        <div id="computed_keys" style="margin-top:10px;"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Входной файл</div>
+        <div class="file-area" onclick="document.getElementById('enc_file').click()">
+          <input type="file" id="enc_file" onchange="fileSelected(this)">
+          <div style="font-size:13px; color:var(--color-text-secondary);">Выберите файл любого формата</div>
+          <div class="file-info" id="file_info">файл не выбран</div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="doEncrypt()">Зашифровать</button>
+        <button class="btn" onclick="clearEnc()">Очистить</button>
+      </div>
+
+      <div id="enc_result" style="margin-top:1rem;"></div>
+    </div>
+
+    <!-- ДЕШИФРОВАНИЕ -->
+    <div id="dec" class="panel">
+      <div class="card">
+        <div class="section-title">Параметры дешифрования</div>
+        <div class="grid2" style="margin-bottom:12px;">
+          <div class="field">
+            <label>r (модуль, r = p × q)</label>
+            <input type="number" id="dec_r" value="3233" min="2" oninput="validateDec()">
+          </div>
+          <div class="field">
+            <label>Kc (закрытый ключ)</label>
+            <input type="number" id="dec_kc" value="2753" min="2" oninput="validateDec()">
+          </div>
+        </div>
+        <div id="dec_checks"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-title">Зашифрованный файл</div>
+        <div class="file-area" onclick="document.getElementById('dec_file').click()">
+          <input type="file" id="dec_file" onchange="decFileSelected(this)">
+          <div style="font-size:13px; color:var(--color-text-secondary);">Выберите .rsa файл</div>
+          <div class="file-info" id="dec_file_info">файл не выбран</div>
+        </div>
+
+        <div style="margin-top:12px;">
+          <div class="section-title" style="margin-bottom:8px;">или вставьте числа вручную (через пробел)</div>
+          <textarea id="dec_manual" placeholder="Пример: 2557 2081 1580..."></textarea>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="btn btn-primary" onclick="doDecrypt()">Дешифровать</button>
+        <button class="btn" onclick="clearDec()">Очистить</button>
+      </div>
+
+      <div id="dec_result" style="margin-top:1rem;"></div>
+    </div>
+
+  </div>
+</body>
+</html>
